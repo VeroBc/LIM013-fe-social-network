@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
+*{
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}
+
+.motto {
+    text-align: center;
+}
+
+.signUpForm
+{
+    display: block;
+    text-align: center;
+}
+
+form {
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+
+.signUpContainer > * {
+    padding: 1em;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+
+/* Form styles */
+
+.signUpForm button {
+    background: #FF009E;
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+}
+
+.signUpForm label {
+    font-size: 16px;
+}
+
+.signUpContainer .signUpForm input, .signUpContainer .signUpForm button {
+    width: 330px;
+    border-radius: 22px;
+    border: 0;
+    padding: 13px;
+    font-size: 15px;
+    font-family: 'Nunito', sans-serif;
+}
+
+input::placeholder {
+    color: #8b8a8a;
+    font-size: 15px;
+    font-family: 'Nunito', sans-serif;
+}
+
+
+.signUpContainer {
+    display: flex; 
+    flex-direction: row; 
+    flex-wrap: wrap; 
+    width:100%; 
+    line-height: 2;
+}
+
+.signUpContainer > * {
+    flex: 1;
+    /* min-width: 200px; */
+    padding: 1.5em;
+    display: block;
+}
+
+@media (max-width: 399px) {
+    .signUpContainer > * {
+        width: 100%; 
+        min-width: 300px; 
+    }
+
+}
+
+
+.signUpContainer > *:nth-child(1) {
+    background-color: #e4e2e2;
+    /* background-color: yellow; */
+}
+
+.signUpContainer > *:nth-child(2) {
+    background-color: #e4e2e2;
+    /* background-color: slateblue; */
+}
