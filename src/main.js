@@ -1,10 +1,10 @@
-import { changeTmp } from './view-controller/router.js';
+import { changeView } from './view-controller/router.js';
 import { firebaseInit } from './firebase/config.js';
 
 const init = () => {
   firebaseInit();
-  changeTmp(window.location.hash);
-  window.addEventListener('hashchange', () => changeTmp(window.location.hash));
+  changeView(window.location.hash);
+  window.addEventListener('hashchange', () => changeView(window.location.hash));
 };
 
 window.addEventListener('load', init);
