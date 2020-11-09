@@ -1,4 +1,4 @@
-import { createUserAccount } from '../firebase-controller/signup-controller.js';
+import { createUser } from '../firebase-controller/signup-controller.js';
 
 export default () => {
   const viewSignUp = `
@@ -60,7 +60,7 @@ export default () => {
 
   //   User registration in Firebase
   const signUpButton = divElement.querySelector('#signUpButton');
-  signUpButton.addEventListener('click', createUserAccount);
+  signUpButton.addEventListener('click', createUser);
 
   return divElement;
 };
