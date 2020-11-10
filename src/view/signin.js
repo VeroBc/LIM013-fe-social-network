@@ -1,18 +1,19 @@
 export default () => {
   const viewSignIn = `
-  <img class="logo" src="../src/img/logo-lab-black.svg" alt="">
-  <h3 class="center-text">Una red social para preguntas y respuestas hecho por laboratorians y para laboratorians.</h3>
-  <img src="../src/img/home.svg">
-  <form id="signup-form">
-    <p>Inicia sesión para unir a la comunidad de apoyo</p>
-    <button type="button"><img src="../src/img/logo-google.svg" alt="">Google</button>
-    <p>O continua con<p>
-    <label for="mail">Correo Electrónico</label>
-    <input type="email" id="mail" name="user_mail">
-    <label for="password">Contraseña</label>
-    <input type="password" id="password" name="user_password">
-    <input type="submit" id="signin" value="Iniciar Sesión">
-    <p class="">¿No tienes una cuenta? <a href="#/"><span class="">Regístrate</span></a></p>
+  <img src="../src/img/home.svg" class="img-home a">
+  <form id="signin-form" class="b">
+    <img class="logo" src="../src/img/logo-lab-black.svg" alt="">
+    <p class="description text">Una red social para preguntas y respuestas hecho por laboratorians y para laboratorians.</p>
+    <button type="button" class="button-google"><img src="../src/img/logo-google.svg" class="google-icon"alt="">Google</button>
+    <div class="line">
+      <span class="text">
+        O continua con
+      </span>
+    </div>
+    <input class ="email" type="email" id="mail" name="user_mail" placeholder="Ingresa tu correo electrónico">
+    <input class = "password" type="password" id="password" name="user_password" placeholder="Ingresa tu contraseña">
+    <input class="submit" type="submit" id="signin" value="Iniciar Sesión">
+    <p class="text">¿No tienes una cuenta? <a href="#/"><span class="change-form">Regístrate</span></a></p>
   </form>`;
   const sectionElement = document.createElement('section');
   sectionElement.classList.add('position');
