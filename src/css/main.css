@@ -11,8 +11,8 @@ body {
   margin: 0 auto;
   display: grid;
   width: 90%;
-  height: 130vh;
+  height: 100vh;
   justify-content: center;
   align-items: center;
-  align-content: space-around; 
+  align-content: space-evenly; 
 }
