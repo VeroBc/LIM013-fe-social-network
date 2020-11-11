@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
@@ -15,4 +16,9 @@ body {
   justify-content: center;
   align-items: center;
   align-content: space-evenly; 
+}
+
+::placeholder {
+    color: #8b8a8a;
+    font-size: 1em;
 }
