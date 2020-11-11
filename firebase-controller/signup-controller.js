@@ -1,4 +1,4 @@
-// import { createUserAccount } from '../firebase/authentication.js';
+// import { createUserAccount } from '../firebase/autentication.js';
 
 // export const createUser = (email, password) => {
 //   createUserAccount(email, password)
