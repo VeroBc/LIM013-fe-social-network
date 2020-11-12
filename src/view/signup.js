@@ -1,56 +1,39 @@
-import { createUser } from '../firebase-controller/signup-controller.js';
+import { userSignUp } from '../firebase-controller/signup-controller.js';
 
 export default () => {
   const viewSignUp = `
-                <aside>
-                    <h2 class="motto" >Una red social para preguntas y respuestas hecho por laboratorians y para laboratorians.</h2>
+                <aside class="aside">
+                    <img class="foto" src="../img/home.svg" alt=""> 
                 </aside>
                 <form action="/" method="POST" id="signUpForm" class="signUpForm">
-                    <p>
-                        <label>LOGO</label>
-                    </p>
-                    <p class="googleIcon" id="googleIcon">
-                        <p>Registrarse con Google</p>
-                    </p>
-                    <p>
-                        <label>O continua con</label>
-                    </p>
-                    <p>
-                        <input type="text" placeholder="Crea un nombre de usuario" id="username" required>
-                    </p>
-                    <p>
-                        <input type="email" placeholder="Ingresa tu correo electrónico" id="email" required >
-                    </p>
-                    <p>
-                        <input type="password" placeholder="Ingresa tu contraseña" id="password" required>
-                    </p>
-                    <p>
-                        <button type="submit" id="signUpButton">Registrarse</button>
+                    <img src="../img/logo-lab-black.svg" alt="Q&A" class="logo">  
+                    <div><label>Una red social para preguntas y respuestas hecho por laboratorians y para laboratorians</label></div>
+                    <div><img src="../img/logo-google.svg" alt="Google" class="googleIcon"></div>
+                    <div class="optionSignUp"><label>O continua con</label></div>
+                    <div id="inputButton">
+                        <input type="email" placeholder="Correo Electrónico" id="email" class="inputButton" required >
+                        <input type="password" placeholder="Contraseña" id="password" class="inputButton" required>
                         <div id= "errorMessage"></div>
-                    </p>
-                    <p>¿Tienes una cuenta?</p>
-                    <p><a href="#/signin">Iniciar sesión</a></p>
+                    </div>
+                    <button type="submit" id="signUpButton">Registrarse</button>
+                    <p>¿Tienes una cuenta?
+                    <a href="#/signin" class="login">Inicia sesión</a></p>
                 </form>
                 `;
   const divElement = document.createElement('div');
   divElement.classList.add('signUpContainer');
-  //   divElement.classList.add('marco');
   divElement.innerHTML = viewSignUp;
 
   //   Fields validation
-  const usernameField = divElement.querySelector('#username');
   const passwordField = divElement.querySelector('#password');
   const form = divElement.querySelector('#signUpForm');
   const errorElement = divElement.querySelector('#errorMessage');
 
   form.addEventListener('submit', (e) => {
     const messages = [];
-    if (usernameField.value === '' || usernameField.value === null) {
-      messages.push('Se requiere ingresar el nombre');
-    }
     const passw = /^[A-Za-z]\w{6,20}$/;
     if (!passwordField.value.match(passw)) {
-      messages.push('La contraseña debe tener al menos 6 caracteres y debe contener al menos una letra y un número');
+      messages.push('La contraseña debe tener al menos 6 caracteres, una letra y un número');
     }
     if (messages.length > 0) {
       e.preventDefault();
@@ -60,7 +43,7 @@ export default () => {
 
   //   User registration in Firebase
   const signUpButton = divElement.querySelector('#signUpButton');
-  signUpButton.addEventListener('click', createUser);
+  signUpButton.addEventListener('click', userSignUp);
 
   return divElement;
 };
