@@ -1,10 +1,10 @@
 export default () => {
   const viewSignIn = `
-  <img src="../src/img/home.svg" class="img-home">
+  <img src="./img/home.svg" class="img-home">
   <form id="signin-form">
-    <img class="logo-signin" src="../src/img/logo-lab-black.svg" alt="">
+    <img class="logo-signin" src="./img/logo-lab-black.svg" alt="">
     <p class="text-signin">Una red social para preguntas y respuestas hecho por laboratorians y para laboratorians.</p>
-    <button type="button" class="button-google-signin"><img src="../src/img/logo-google.svg" class="google-icon"alt="">Google</button>
+    <button type="button" class="button-google-signin"><img src="./img/logo-google.svg" class="google-icon"alt="">Google</button>
     <div class="line">
       <span class="text-signin">
         O continua con
