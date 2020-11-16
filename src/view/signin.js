@@ -1,4 +1,5 @@
 import { signinUser } from '../firebase-controller/signin-controller.js';
+import { googleAccount } from '../firebase-controller/authGoogle.js';
 
 export default () => {
   const viewSignIn = `
@@ -26,11 +27,12 @@ export default () => {
   const form = sectionElement.querySelector('#signin-form');
   const passwordField = sectionElement.querySelector('#passwordSignIn');
   const emailField = sectionElement.querySelector('#mail');
+  const google = sectionElement.querySelector('.button-google-signin');
   //   Fields validation
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     signinUser(emailField.value, passwordField.value);
   });
-
+  google.addEventListener('click', () => googleAccount());
   return sectionElement;
 };
