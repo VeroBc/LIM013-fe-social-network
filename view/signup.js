@@ -1,4 +1,5 @@
 import { createUser } from '../firebase-controller/signup-controller.js';
+import { googleAccount } from '../firebase-controller/authGoogle.js';
 
 export default () => {
   const viewSignUp = `
@@ -27,10 +28,12 @@ export default () => {
   const form = divElement.querySelector('#signUpForm');
   const passwordField = divElement.querySelector('#password');
   const emailField = divElement.querySelector('#email');
+  const google = divElement.querySelector('.googleIcon');
   //   Fields validation
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     createUser(emailField.value, passwordField.value);
   });
+  google.addEventListener('click', () => googleAccount());
   return divElement;
 };
