@@ -1,4 +1,3 @@
-
 import { signInWithGoogle } from '../firebase/autentication.js';
 
 const provider = new firebase.auth.GoogleAuthProvider();
