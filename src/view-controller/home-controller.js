@@ -1,6 +1,6 @@
 import { signOut, user } from '../firebase/autentication.js';
 
-export const logginOut = () => {
+export const signOutUser = () => {
   signOut().then(() => {
     // eslint-disable-next-line no-console
     console.log('user is signed out');
