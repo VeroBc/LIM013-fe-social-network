@@ -52,7 +52,7 @@ export default () => {
   const profileView = sectionElement.querySelector('#profileView');
   profileView.addEventListener('click', (e) => {
     e.preventDefault();
-    window.location.hash = '#/signin';
+    window.location.hash = '#/profile';
   });
 
   return sectionElement;
