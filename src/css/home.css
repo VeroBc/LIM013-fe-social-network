@@ -1,0 +1,179 @@
+.mainHead {
+grid-area: header;
+}
+
+.content {
+grid-area: content;
+text-align: center;
+}
+
+.side {
+grid-area: sidebar;
+text-align: center;
+display: grid;
+grid-template-areas: ". pictureAside userName . "
+                     ". pictureAside userEmail . ";
+}
+.publicPicture {
+    grid-area: publicPicture;
+    width: 35px;
+    display: block;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10%;
+}
+
+.publicName {
+    grid-area: publicName;
+    text-align: start;
+    padding-top: 15px;
+    color: #FF009E;
+    font-weight: bold;
+}
+
+
+.publicSide {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
+    grid-template-areas: "publicPicture publicName . . . ."
+                         "publicPosts publicPosts publicPosts publicPosts publicPosts publicPosts";
+    margin:5%;
+    border: 1px solid #DDDDDD;
+    border-radius: 5px;
+}
+
+.publicPosts {
+    grid-area: publicPosts;
+    padding: 10px;
+    width: 100%;
+    border: none;
+}
+
+
+.homeContainer {
+    display: grid;
+    row-gap: 40px;
+    column-gap: 20px;
+    grid-template-areas: 
+      "header"
+      "sidebar"
+      "content";
+  }
+
+
+.mainHead {
+    display: grid;
+    grid-template-columns: 15% 70% 15%;
+    background-color: #FF009E;
+    align-items: center;
+}
+
+.userPicture {
+    min-width: 75px;
+    max-width: 50px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 10px;
+    padding-right: 20px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    cursor: pointer;
+}
+
+.userPictureAside {
+    text-align: center;
+    min-width: 50px;
+    max-width: 100px;
+    grid-area: pictureAside;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.userName {
+    grid-area: userName;
+    align-self: center;
+    margin-top: 50px;
+    font-weight: bold;
+}
+
+.userEmail {
+    grid-area: userEmail;
+    align-self: center;
+}
+
+
+#signOutButton {
+    text-align: center;
+    margin-right: 20px;
+    color: white;
+    cursor: pointer;
+}
+
+.logo {
+    padding-top: 0px;
+    padding-right: 20px;
+    padding-bottom: 0px;
+    padding-left: 20px;
+}
+
+.content {
+    margin-top: 10px;
+}
+
+.inputPosts {
+    padding: 15px;
+    border: 1px solid #DDDDDD;
+    border-radius: 5px;
+    width: 90%;
+}
+
+#postsButton {
+    background-color: #FF009E;
+    padding: 4px;
+    color: white;
+    font-size: 15px;
+    width: 120px;
+    border-radius: 22px;
+    border: 0;
+    display: block;
+    margin-left: auto;
+    margin-right: 5%;
+    margin-bottom: 5%;
+}
+
+
+@media (min-width: 768px) {
+    .homeContainer {
+      margin-left: 0px;
+      margin-right: 0px;
+      grid-template-columns: 1fr 2fr 3fr 1fr;
+      grid-template-areas: 
+        "header  header header header"
+        ". sidebar content .";
+    }
+    .side {
+        text-align: center;
+        display: block; 
+    }
+    .userName {
+        margin-top: 25px;
+    }
+    .inputPosts {
+        width: 100%;
+    }
+    .publicPosts {
+        width: 100%;
+    }
+    .content {
+        margin-top: 30px;
+    }
+    #postsButton {
+        margin-right: 0%;
+    }
+    
+    .publicSide {
+        margin-right:0%;
+        margin-left: 0%;
+    }
+}

@@ -11,9 +11,7 @@ body {
 #container {
   margin: 0 auto;
   display: grid;
-  width: 90%;
-  height: 100vh;
-  justify-content: center;
+  width: 100%;
   align-items: center;
   align-content: space-evenly; 
 }
