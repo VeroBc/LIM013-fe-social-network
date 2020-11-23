@@ -1,5 +1,4 @@
-import { createUser } from '../firebase-controller/signup-controller.js';
-import { googleAccount } from '../firebase-controller/authGoogle.js';
+import * as auth from '../auth/index.js';
 
 export default () => {
   const viewSignUp = `
@@ -32,8 +31,23 @@ export default () => {
   //   Fields validation
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    createUser(emailField.value, passwordField.value);
+    auth.createUser(emailField.value, passwordField.value)
+      .then((userFromLogin) => {
+        const user = auth.currentUser();
+        user.updateProfile({
+          displayName: 'Maria Luna',
+          photoURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdw-_Wu3l3A2rbLNLoXKPlNc8zGY5DHSyQBQ&usqp=CAUs',
+        }).then((result) => {
+          console.log(result);
+        });
+        window.location.hash = '#/profile';
+      })
+      .catch((error) => {
+        const errorMessage = document.getElementById('errorMessages');
+        errorMessage.innerHTML = error.message;
+      });
   });
-  google.addEventListener('click', () => googleAccount());
+  google.addEventListener('click', () => auth.googleAccount());
+
   return divElement;
 };
