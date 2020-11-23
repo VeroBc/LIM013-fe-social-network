@@ -8,9 +8,9 @@ export default () => {
       </ul>
     </nav>
     <section class="user-edit-profile">
-      <h3 class="name-user">Sharon Huaman</h3>
       <img class="img-edit-user-profile"src="./img/user-default.svg">
       <i class="fas fa-camera camera-profile"></i>
+      <h3 class="name-user">Sharon Huaman</h3>
       <p class="correo-profile">sharonb.huaman@gmail.com</p>
       <i class="fas fa-pencil-alt icon-edit-profile" id="open"></i>
       <div id="mask" class="hidden"></div>
