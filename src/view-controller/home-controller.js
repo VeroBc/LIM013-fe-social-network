@@ -8,15 +8,16 @@ export const signOutUser = () => {
   });
 };
 
-export const loadInfoUser = () => {
-  const currentUser = user();
-  if (currentUser != null) {
-  // const name = currentUser.displayName;
-    const email = currentUser.email;
-    // const photoUrl = currentUser.photoURL;
-    // const emailVerified = currentUser.emailVerified;
-    const uid = currentUser.uid;
-    // eslint-disable-next-line no-console
-    console.log(email, uid);
-  }
-};
+export const loadInfoUser = () => user();
+
+
+//   const currentUser = user();
+//   if (!currentUser) return null;
+// const name = currentUser.displayName;
+//   const email = currentUser.email;
+// const photoUrl = currentUser.photoURL;
+// const emailVerified = currentUser.emailVerified;
+//   const uid = currentUser.uid;
+// eslint-disable-next-line no-console
+//   console.log(email, uid);
+//   return email;
