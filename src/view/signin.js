@@ -1,5 +1,4 @@
-import { signinUser } from '../firebase-controller/signin-controller.js';
-import { googleAccount } from '../firebase-controller/authGoogle.js';
+import * as auth from '../auth/index.js';
 
 export default () => {
   const viewSignIn = `
@@ -29,10 +28,24 @@ export default () => {
   const emailField = sectionElement.querySelector('#mail');
   const google = sectionElement.querySelector('.button-google-signin');
   //   Fields validation
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    signinUser(emailField.value, passwordField.value);
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    auth.signinUser(emailField.value, passwordField.value)
+      .then((userFromLogin) => {
+        const user = auth.currentUser();
+        user.updateProfile({
+          displayName: 'Maria Luisa',
+          photoURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdw-_Wu3l3A2rbLNLoXKPlNc8zGY5DHSyQBQ&usqp=CAUs',
+        }).then((result) => {
+          console.log(result);
+        });
+        window.location.hash = '#/home';
+      })
+      .catch((error) => {
+        const errorMessage = document.getElementById('errorMessages');
+        errorMessage.innerHTML = error.message;
+      });
   });
-  google.addEventListener('click', () => googleAccount());
+  google.addEventListener('click', () => auth.googleAccount());
   return sectionElement;
 };
