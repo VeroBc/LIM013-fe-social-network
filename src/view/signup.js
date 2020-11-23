@@ -32,10 +32,10 @@ export default () => {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     auth.createUser(emailField.value, passwordField.value)
-      .then((userFromLogin) => {
+      .then(() => {
         const user = auth.currentUser();
         user.updateProfile({
-          displayName: 'Maria Luna',
+          displayName: user.email.match(/^([^@]*)@/)[1],
           photoURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdw-_Wu3l3A2rbLNLoXKPlNc8zGY5DHSyQBQ&usqp=CAUs',
         }).then((result) => {
           console.log(result);
