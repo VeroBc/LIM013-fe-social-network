@@ -1,7 +1,6 @@
-import { signOutUser, loadInfoUser } from '../view-controller/home-controller.js';
+import { signOutUser } from '../firebase-controller/signout-controller.js';
 
 export default () => {
-  loadInfoUser();
   const userPicture = localStorage.getItem('userpicture');
   const userName = localStorage.getItem('username');
   const userEmail = localStorage.getItem('useremail');
