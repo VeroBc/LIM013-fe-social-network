@@ -13,10 +13,14 @@ body {
   display: grid;
   width: 100%;
   align-items: center;
-  align-content: space-evenly; 
+  align-content: space-evenly;
+}
+
+#file {
+  display: none;
 }
 
 ::placeholder {
-    color: #8b8a8a;
-    font-size: 1em;
+  color: #8b8a8a;
+  font-size: 1em;
 }
