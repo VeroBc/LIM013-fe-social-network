@@ -1,5 +1,5 @@
 import { createUserAccount, user } from '../firebase/autentication.js';
-import { inToUser } from '../firebase/store.js';
+import { inToUser, getUser } from '../firebase/store.js';
 
 const imgDefault = 'gs://qa-lab-c5336.appspot.com/user-default.svg';
 export const createUser = (email, password) => {
@@ -14,6 +14,7 @@ export const createUser = (email, password) => {
         photo: imgDefault,
       });
     })
+    .then(() => getUser())
     .then(() => {
       window.location.hash = '#/home';
     })
