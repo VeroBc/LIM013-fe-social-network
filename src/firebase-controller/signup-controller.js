@@ -8,6 +8,18 @@ export const createUser = (email, password) => {
   } else {
     createUserAccount(email, password)
       .then(() => {
+        const currentUser = firebase.auth().currentUser;
+        const docRef = firebase.firestore().collection('users').doc(currentUser.id);
+        const users = docRef.set({
+          name: currentUser.email.match(/^([^@]*)@/)[1],
+          email: currentUser.email,
+          uid: currentUser.uid,
+        });
+        console.log('here users', users);
+        return users;
+      })
+      .then(() => {
+        console.log('Success create collection');
         window.location.hash = '#/home';
       })
       .catch((e) => {
