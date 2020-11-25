@@ -1,8 +1,10 @@
 import { user } from '../firebase/autentication.js';
 import { signOutUser } from '../firebase-controller/signout-controller.js';
 import { uploadProfileImg } from '../firebase/storage.js';
+import { getUser } from '../firebase/store.js';
 
 export default () => {
+  getUser();
   const viewProfile = `
     <nav class="menu-profile">
       <ul>
@@ -12,11 +14,11 @@ export default () => {
       </ul>
     </nav>
     <section class="user-edit-profile">
-      <h3 class="name-user">Sharon Huaman</h3>
+      <h3 class="name-user" id="userName"></h3>
       <img class="img-edit-user-profile" src="./img/user-default.svg">
       <i class="fas fa-camera camera-profile"></i>
       <input id="file" type ="file"/>
-      <p class="correo-profile">sharonb.huaman@gmail.com</p>
+      <p class="correo-profile" id="userEmail"></p>
       <i class="fas fa-pencil-alt icon-edit-profile" id="open"></i>
       <div id="mask" class="hidden"></div>
       <section id="modal" class="hidden">
