@@ -1,7 +1,7 @@
 import { user } from '../firebase/autentication.js';
-import { signOutUser } from '../firebase-controller/signout-controller.js';
 import { uploadProfileImg } from '../firebase/storage.js';
 import { getUser } from '../firebase/store.js';
+import * as auth from '../auth/index.js';
 
 export default () => {
   getUser();
@@ -14,21 +14,16 @@ export default () => {
       </ul>
     </nav>
     <section class="user-edit-profile">
-      <h3 class="name-user" id="userName"></h3>
       <img class="img-edit-user-profile" src="./img/user-default.svg">
       <i class="fas fa-camera camera-profile"></i>
       <input id="file" type ="file"/>
-      <p class="correo-profile" id="userEmail"></p>
+      <h3 id="userName" class="name-user"></h3>
       <i class="fas fa-pencil-alt icon-edit-profile" id="open"></i>
+      <p class="correo-profile" id="userEmail"></p>
       <div id="mask" class="hidden"></div>
       <section id="modal" class="hidden">
         <form>
-          <p>Nombre de usuario</p>
-          <input class ="email-signin" type="text" id="name" name="user_mail" placeholder="Ingresa tu nombre" required>
-          <p>Correo de usuario</p>
-          <input class = "password-signin" type="password" id="email" name="user_password" placeholder="Ingresa tu contraseña" required>
-          <p>Contraseña</p>
-          <input class = "password-signin" type="password" id="password" name="user_password" placeholder="Ingresa tu contraseña" required>
+          <input class ="email-signin" type="text" id="name" name="user_mail" placeholder="Nuevo nombre de usuario" required>
           <input id="close" class="submit-signin" type="submit" id="signin" value="Guardar Cambios">
         </form>
       </section>
@@ -50,7 +45,7 @@ export default () => {
 
   const logout = sectionElement.querySelector('#logout');
   logout.addEventListener('click', () => {
-    signOutUser();
+    auth.signOutUser();
   });
 
   const camera = sectionElement.querySelector('.camera-profile');

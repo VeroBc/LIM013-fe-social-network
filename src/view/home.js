@@ -1,5 +1,6 @@
-import { signOutUser } from '../firebase-controller/signout-controller.js';
 import { getUser } from '../firebase/store.js';
+import * as auth from '../auth/index.js';
+
 
 export default () => {
   const user = firebase.auth().currentUser;
@@ -46,7 +47,7 @@ export default () => {
   const signOutButton = sectionElement.querySelector('#signOutButton');
   signOutButton.addEventListener('click', (e) => {
     e.preventDefault();
-    signOutUser();
+    auth.signOutUser();
   });
 
   const profileView = sectionElement.querySelector('#profileView');
