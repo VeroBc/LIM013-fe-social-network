@@ -32,8 +32,8 @@
 .img-edit-user-profile {
   object-fit: cover;
   display: block;
-  width: 220px;
-  height: 220px;
+  width: 150px;
+  height: 150px;
   margin-bottom: -10px;
   border-radius: 250px;
 }
@@ -59,6 +59,7 @@
   font-size: 28px;
   font-weight: bold;
   color: #383838;
+  margin-top: 20px;
 }
 
 .correo-profile {
@@ -69,8 +70,8 @@
 
 .icon-edit-profile {
   position: absolute;
-  margin-top: -20px;
-  margin-left: 100px;
+  margin-top: -27px;
+  margin-left: 80px;
   color: #FF009E;
   border-bottom: 1px #FF009E solid;
 }
@@ -130,7 +131,7 @@ textarea:focus {
   .post {
     grid-column: 2;
     grid-row: 2 / 3;
-    margin-right: 30%;
+    margin-right: 35%;
   }
 }
 
@@ -147,8 +148,9 @@ textarea:focus {
 #modal {
   background: #fff;
   color: #555;
-  width: 300px;
+  width: 400px;
   padding: 40px;
+  margin: 10px;
   border-radius: 4px;
   position: absolute;
   top: 40px;
