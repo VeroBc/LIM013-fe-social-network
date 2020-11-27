@@ -1,30 +1,33 @@
-import { user } from '../firebase/autentication.js';
-import { uploadProfileImg } from '../firebase/storage.js';
-import { getUser } from '../firebase/store.js';
-import * as auth from '../auth/index.js';
+import { uploadProfileImg } from '../firebase-controller/storage.js';
+import { getUser, updateUsername } from '../firebase-controller/firestore.js';
+import * as auth from '../firebase-controller/auth.js';
 
 export default () => {
+  const users = firebase.auth().currentUser;
+  if (!users) {
+    window.location.hash = '#/signin';
+  }
   getUser();
   const viewProfile = `
     <nav class="menu-profile">
       <ul>
-        <a href="#/profile"><img class="img-user-profile" src="./img/user-default.svg"></a>
+        <a href="#/profile"><img id="userPicture" class="img-user-profile"></a>
         <a href="#/home"><img src="./img/logo-lab-white.svg"></a>
         <a href="#"><i id="logout" class="fas fa-sign-out-alt logout-profile"></i></a>
       </ul>
     </nav>
     <section class="user-edit-profile">
-      <img class="img-edit-user-profile" src="./img/user-default.svg">
+      <img id="userPic" class="img-edit-user-profile">
       <i class="fas fa-camera camera-profile"></i>
-      <input id="file" type ="file"/>
-      <h3 id="userName" class="name-user"></h3>
+      <input id="file" type ="file" accept="image/jpeg, image/png"/>
+      <h3 id="userName" class="name-user">${users.email.match(/^([^@]*)@/)[1] || 'Username'}</h3>
       <i class="fas fa-pencil-alt icon-edit-profile" id="open"></i>
-      <p class="correo-profile" id="userEmail"></p>
+      <p class="correo-profile" id="userEmail">${users.email || 'mail@mail.com'}</p>
       <div id="mask" class="hidden"></div>
       <section id="modal" class="hidden">
         <form>
-          <input class ="email-signin" type="text" id="name" name="user_mail" placeholder="Nuevo nombre de usuario" required>
-          <input id="close" class="submit-signin" type="submit" id="signin" value="Guardar Cambios">
+          <input class ="email-signin" type="text" id="updateName" placeholder="Nuevo nombre de usuario" required>
+          <button id="save" class="submit-signin" type="submit">Guardar cambios</button>
         </form>
       </section>
     </section>
@@ -36,8 +39,7 @@ export default () => {
       </section>
     </section>
     `;
-  const currentUser = user();
-  const db = firebase.firestore();
+
   document.getElementById('container').classList.remove('main');
   const sectionElement = document.createElement('section');
   sectionElement.classList.add('position-profile');
@@ -59,7 +61,7 @@ export default () => {
   });
 
   const open = sectionElement.querySelector('#open');
-  const close = sectionElement.querySelector('#close');
+  const save = sectionElement.querySelector('#save');
   const modal = sectionElement.querySelector('#modal');
   const mask = sectionElement.querySelector('#mask');
 
@@ -67,15 +69,15 @@ export default () => {
     modal.classList.remove('hidden');
     mask.classList.remove('hidden');
   });
-  close.addEventListener('click', () => {
-    db.collection('users-qa').doc(currentUser.uid).update({
-      mail: '',
-      name: '',
-      pass: '',
-    });
+
+  save.addEventListener('click', () => {
+    const username = document.querySelector('#updateName');
+    const newname = username.value;
+    updateUsername(newname);
     modal.classList.add('hidden');
     mask.classList.add('hidden');
   });
+
   mask.addEventListener('click', () => {
     modal.classList.add('hidden');
     mask.classList.add('hidden');

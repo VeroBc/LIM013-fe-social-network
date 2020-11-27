@@ -1,21 +1,21 @@
-import { getUser } from '../firebase/store.js';
-import * as auth from '../auth/index.js';
-
+import * as auth from '../firebase-controller/auth.js';
+import { getUser } from '../firebase-controller/firestore.js';
 
 export default () => {
   const user = firebase.auth().currentUser;
   if (!user) {
     window.location.hash = '#/signin';
   }
+
   getUser();
   const viewHome = `
     <header class="mainHead">
-        <img id="profileView" class="userPicture" src="${user.photoURL || './img/user-default.svg'}">
+        <img id="userPicture" class="userPicture">
         <img src="./img/logo-lab-white.svg" alt="Q&A" class="logo">
         <i class="fas fa-sign-out-alt" id="signOutButton"></i>
     </header>
     <aside class="side">
-        <img class="userPictureAside" src="${user.photoURL || './img/user-default.svg'}">
+        <img id="userPic" class="userPictureAside">
         <p class="userName" id="userName"></p>
         <p class="userEmail" id="userEmail"></p>
     </aside>
@@ -50,7 +50,7 @@ export default () => {
     auth.signOutUser();
   });
 
-  const profileView = sectionElement.querySelector('#profileView');
+  const profileView = sectionElement.querySelector('#userPicture');
   profileView.addEventListener('click', (e) => {
     e.preventDefault();
     window.location.hash = '#/profile';
