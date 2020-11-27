@@ -1,4 +1,4 @@
-import * as auth from '../auth/index.js';
+import * as auth from '../firebase-controller/auth.js';
 
 export default () => {
   const viewSignUp = `

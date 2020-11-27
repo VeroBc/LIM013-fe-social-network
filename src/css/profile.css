@@ -26,7 +26,14 @@
 }
 
 .img-user-profile {
-  width: 35px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  cursor: pointer;
+  object-fit: cover;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
 }
 
 .img-edit-user-profile {
