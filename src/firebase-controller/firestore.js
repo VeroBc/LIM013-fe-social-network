@@ -22,7 +22,7 @@ export const getUser = () => {
         const mail = document.querySelector('#userEmail');
         const photo = document.querySelector('#userPicture');
         const photoAside = document.querySelector('#userPic');
-        name.innerText = myData.name;
+        name.value = myData.name;
         mail.innerText = myData.mail;
         photo.src = myData.photo;
         photoAside.src = myData.photo;
@@ -31,6 +31,16 @@ export const getUser = () => {
     })
     .catch(e => console.log('error', e));
 };
+
+// export const getNotes = callback => firebase.firestore().collection('users')
+//   .onSnapshot((querySnapshot) => {
+//     const data = [];
+//     querySnapshot.forEach((doc) => {
+//       data.push({ id: doc.id, ...doc.data() });
+//     });
+//     callback(data);
+//   });
+
 
 export const updateUsername = (newname) => {
   const db = firebase.firestore();
@@ -46,3 +56,84 @@ export const updateUsername = (newname) => {
     })
     .catch(e => console.log('error', e));
 };
+
+
+export const publishPost = (newPost, file, date) => {
+  firebase.firestore().collection('posts').add({
+    name: firebase.auth().currentUser.name,
+    photo: firebase.auth().currentUser.name,
+    post: newPost,
+    image: file,
+    date,
+  });
+};
+
+export const processPostsList = ((queryResult) => {
+  const arrayPromises = [];
+  queryResult.forEach((doc) => {
+    const postData = doc.data();
+    // Este es el "then" de los users,
+    // Que retorna una promesa del combinado con el Post y el User
+    const newPromise = postData.userRef.get()
+      .then(docUser => ({ ...postData, user: docUser.data() }));
+    // Al final del primer "then" se pushea una promesa por cada post
+    arrayPromises.push(newPromise);
+  });
+  // Al final del primer "then" retornamos una promesa.all de todos esas promesas pusheadas
+  return Promise.all(arrayPromises);
+});
+
+export const getAllPosts = () => {
+  const postsRef = firebase.firestore().collection('posts');
+  const arrayPromises = [];
+  return postsRef.get()
+    // Este es el "then" de los posts
+    .then((queryResult) => {
+      queryResult.forEach((doc) => {
+        const postData = doc.data();
+        // Este es el "then" de los users,
+        // Que retorna una promesa del combinado con el Post y el User
+        const newPromise = postData.userRef.get()
+          .then(docUser => ({ ...postData, user: docUser.data() }));
+        // Al final del primer "then" se pushea una promesa por cada post
+        arrayPromises.push(newPromise);
+      });
+      // Al final del primer "then" retornamos una promesa.all de todos esas promesas pusheadas
+      return Promise.all(arrayPromises);
+    })
+    .catch((error) => {
+      console.log('Error getting documents: ', error);
+    });
+};
+
+//   privacy: status,
+//   likes: [],
+
+
+// export const getAllPosts = callback => postsRef
+//   .onSnapshot((querySnapshot) => {
+//     const allPosts = [];
+//     querySnapshot.forEach((doc) => {
+//       allPosts.push({ id: doc.id, ...doc.data() });
+//     });
+//     callback(allPosts);
+//   });
+
+
+/* export const getAllPosts = () => {
+  const postsRef = firebase.firestore().collection('posts');
+  return postsRef
+    .get()
+    .then((queryResult) => {
+      queryResult.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, ' => ', doc.data());
+      });
+      return queryResult;
+    })
+    .catch((error) => {
+      console.log('Error getting documents: ', error);
+    });
+}; */
+
+//   .orderBy('time', 'desc')
