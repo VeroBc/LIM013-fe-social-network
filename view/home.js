@@ -1,14 +1,9 @@
+/* eslint-disable object-curly-newline */
 import * as auth from '../firebase-controller/auth.js';
-import { getUser, getAllPosts, processPostsList } from '../firebase-controller/firestore.js';
+import { getUsers, processPostsList, publishPost } from '../firebase-controller/firestore.js';
 import { uploadProfileImg } from '../firebase-controller/storage.js';
 
 export default () => {
-  const user = firebase.auth().currentUser;
-  if (!user) {
-    window.location.hash = '#/signin';
-  }
-
-  getUser();
   const viewHome = `
     <header class="mainHead">
         <img id="userPicture" class="userPicture">
@@ -50,21 +45,15 @@ export default () => {
     });
   }); */
 
-  firebase.firestore().collection('posts').onSnapshot((queryResult) => {
-    processPostsList(queryResult).then((postsArray) => {
-      const divSections = sectionElement.querySelector('#posts');
-      divSections.innerHTML = '';
-      postsArray.forEach((postData) => {
-        const postElement = document.createElement('div');
-        postElement.innerHTML = `
-          <div class="publicSide">
-            <img class="publicPicture" src="${postData.user.photo || './img/user-default.svg'}">
-            <p class="publicName">${postData.user.name}</p>
-            <p class="publicPosts">${postData.comment}</p>
-          </div>`;
-        divSections.appendChild(postElement);
-      });
-    });
+  getUsers().then((userData) => {
+    const name = sectionElement.querySelector('#userName');
+    const mail = sectionElement.querySelector('#userEmail');
+    const photo = sectionElement.querySelector('#userPicture');
+    const photoAside = sectionElement.querySelector('#userPic');
+    name.value = userData.name;
+    mail.innerText = userData.mail;
+    photo.src = userData.photo;
+    photoAside.src = userData.photo;
   });
 
 
@@ -90,6 +79,49 @@ export default () => {
     });
   }); */
 
+  firebase.firestore().collection('posts').onSnapshot((queryResult) => {
+    processPostsList(queryResult).then((postsArray) => {
+      const divSections = sectionElement.querySelector('#posts');
+      divSections.innerHTML = '';
+      postsArray.forEach((postData) => {
+        const postElement = document.createElement('div');
+        postElement.innerHTML = `
+          <div class="publicSide">
+            <img class="publicPicture" src="${postData.user.photo || './img/user-default.svg'}">
+            <p class="publicName">${postData.user.name}</p>
+            <p class="date">${postData.date}</p>
+            <p class="publicPosts">${postData.comment}</p>
+          </div>`;
+        divSections.appendChild(postElement);
+      });
+    });
+  });
+
+  const postsButton = sectionElement.querySelector('#postsButton');
+  postsButton.addEventListener('click', (e) => {
+    const newPost = sectionElement.querySelector('#inputPosts').value;
+    sectionElement.querySelector('#inputPosts').value = '';
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateTime = new Date().toLocaleDateString('es-AR', options);
+    e.preventDefault();
+    publishPost(newPost, dateTime);
+  });
+
+  // getAllPosts().then((postsArray) => {
+  //   const divSections = sectionElement.querySelector('#posts');
+  //   divSections.innerHTML = '';
+  //   postsArray.forEach((postData) => {
+  //     const postElement = document.createElement('div');
+  //     postElement.innerHTML = `
+  //       <div class="publicSide">
+  //         <img class="publicPicture" src="${postData.user.photo || './img/user-default.svg'}">
+  //         <p class="publicName">${postData.user.name}</p>
+  //         <p class="publicPosts">${postData.comment}</p>
+  //       </div>`;
+  //     divSections.appendChild(postElement);
+  //   });
+  // });
+
   const signOutButton = sectionElement.querySelector('#signOutButton');
   signOutButton.addEventListener('click', (e) => {
     e.preventDefault();
@@ -111,12 +143,6 @@ export default () => {
       uploadProfileImg(photo);
     });
   });
-
-//   const date = new Date().toLocaleString();
-//   const newPost = sectionElement.querySelector('#inputPosts').value;
-//   newPost.addEventListener('click', () => {
-//     posting(newPost, file, date);
-//   });
 
   return sectionElement;
 };

@@ -1,14 +1,9 @@
+/* eslint-disable object-curly-newline */
 import { uploadProfileImg } from '../firebase-controller/storage.js';
-import { getUser, updateUsername } from '../firebase-controller/firestore.js';
+import { getUsers, processPostsProfile, updateUsername, publishPost } from '../firebase-controller/firestore.js';
 import * as auth from '../firebase-controller/auth.js';
 
 export default () => {
-  const user = firebase.auth().currentUser;
-  if (!user) {
-    window.location.hash = '#/signin';
-  }
-
-  getUser();
   const viewProfile = `
     <header class="mainHead">
         <img id="userPicture" class="userPicture">
@@ -26,29 +21,55 @@ export default () => {
         <button id="saveChanges" class="saveChanges hidden" type="submit">Guardar</button>  
     </aside>
     <article class="content">
-        <textarea class="inputPosts" placeholder="En que estas pensando?" ></textarea>
+        <textarea id='inputPosts' class="inputPosts" placeholder="En que estas pensando?" ></textarea>
         <button type="submit" id="postsButton">Compartir</button>
-        <section class="publicSide">
-            <img class="publicPicture" src="${user.photoURL || './img/user-default.svg'}">
-            <p class="publicName">${user.email.match(/^([^@]*)@/)[1] || 'Username'}</p>
-            <textarea class="publicPosts">Hola chicas! Alguien podrá ayudarme con los arrays?</textarea>
-        </section>
-        <section class="publicSide">
-            <img class="publicPicture" src="${user.photoURL || './img/user-default.svg'}">
-            <p class="publicName">${user.email.match(/^([^@]*)@/)[1] || 'Username'}</p>
-            <textarea class="publicPosts">Hola! Alguien sabe como utilizar CSS grid?</textarea>
-        </section>
-        <section class="publicSide">
-            <img class="publicPicture" src="${user.photoURL || './img/user-default.svg'}">
-            <p class="publicName">${user.email.match(/^([^@]*)@/)[1] || 'Username'}</p>
-            <textarea class="publicPosts">Hola a todos! Alguien tendrá algun recurso de Git?</textarea>
-        </section>
+        <div id="postsProfile">Cargando...</div>
     </article> 
-    
     `;
   const sectionElement = document.createElement('div');
   sectionElement.classList.add('homeContainer');
   sectionElement.innerHTML = viewProfile;
+
+  getUsers().then((userData) => {
+    const name = sectionElement.querySelector('#userName');
+    const mail = sectionElement.querySelector('#userEmail');
+    const photo = sectionElement.querySelector('#userPicture');
+    const photoAside = sectionElement.querySelector('#userPic');
+    name.value = userData.name;
+    mail.innerText = userData.mail;
+    photo.src = userData.photo;
+    photoAside.src = userData.photo;
+  });
+
+
+  firebase.firestore().collection('posts').onSnapshot((queryResult) => {
+    processPostsProfile(queryResult).then((postsArray) => {
+      const divSections = sectionElement.querySelector('#postsProfile');
+      divSections.innerHTML = '';
+      postsArray.forEach((postData) => {
+        const postElement = document.createElement('div');
+        postElement.innerHTML = `
+          <div class="publicSide">
+            <img class="publicPicture" src="${postData.user.photo || './img/user-default.svg'}">
+            <p class="publicName">${postData.user.name}</p>
+            <p class="date">${postData.date}</p>
+            <p class="publicPosts">${postData.comment}</p>
+          </div>`;
+        divSections.appendChild(postElement);
+      });
+    });
+  });
+
+
+  const postsButton = sectionElement.querySelector('#postsButton');
+  postsButton.addEventListener('click', (e) => {
+    const newPost = sectionElement.querySelector('#inputPosts').value;
+    sectionElement.querySelector('#inputPosts').value = '';
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateTime = new Date().toLocaleDateString('es-AR', options);
+    e.preventDefault();
+    publishPost(newPost, dateTime);
+  });
 
   const signOutButton = sectionElement.querySelector('#signOutButton');
   signOutButton.addEventListener('click', (e) => {

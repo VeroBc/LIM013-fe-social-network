@@ -9,61 +9,28 @@ export const setUser = (user) => {
     .catch(e => console.log('error', e));
 };
 
-export const getUser = () => {
-  const db = firebase.firestore();
+export const getUsers = () => {
   const uidDoc = firebase.auth().currentUser.uid;
-  db.collection('users-qa')
-    .doc(uidDoc)
-    .get()
-    .then((doc) => {
-      if (doc && doc.exists) {
-        const myData = doc.data();
-        const name = document.querySelector('#userName');
-        const mail = document.querySelector('#userEmail');
-        const photo = document.querySelector('#userPicture');
-        const photoAside = document.querySelector('#userPic');
-        name.value = myData.name;
-        mail.innerText = myData.mail;
-        photo.src = myData.photo;
-        photoAside.src = myData.photo;
-      }
-      console.log('Document successfully got');
-    })
+  const docRef = firebase.firestore().collection('users-qa').doc(uidDoc);
+  return docRef.get()
+    .then(doc => doc.data())
     .catch(e => console.log('error', e));
 };
-
-// export const getNotes = callback => firebase.firestore().collection('users')
-//   .onSnapshot((querySnapshot) => {
-//     const data = [];
-//     querySnapshot.forEach((doc) => {
-//       data.push({ id: doc.id, ...doc.data() });
-//     });
-//     callback(data);
-//   });
-
 
 export const updateUsername = (newname) => {
-  const db = firebase.firestore();
   const uidDoc = firebase.auth().currentUser.uid;
-  db.collection('users-qa')
-    .doc(uidDoc)
-    .update({
-      name: newname,
-    })
-    .then(() => {
-      getUser();
-      console.log('Username updated');
-    })
+  const docRef = firebase.firestore().collection('users-qa').doc(uidDoc);
+  return docRef.update({ name: newname })
+    .then(() => getUsers())
     .catch(e => console.log('error', e));
 };
 
-
-export const publishPost = (newPost, file, date) => {
+export const publishPost = (newPost, date) => {
+  const uidDoc = firebase.auth().currentUser.uid;
+  const docRef = firebase.firestore().collection('users-qa').doc(uidDoc);
   firebase.firestore().collection('posts').add({
-    name: firebase.auth().currentUser.name,
-    photo: firebase.auth().currentUser.name,
-    post: newPost,
-    image: file,
+    userRef: docRef,
+    comment: newPost,
     date,
   });
 };
@@ -83,28 +50,30 @@ export const processPostsList = ((queryResult) => {
   return Promise.all(arrayPromises);
 });
 
-export const getAllPosts = () => {
-  const postsRef = firebase.firestore().collection('posts');
+export const processPostsProfile = ((queryResult) => {
   const arrayPromises = [];
-  return postsRef.get()
-    // Este es el "then" de los posts
-    .then((queryResult) => {
-      queryResult.forEach((doc) => {
-        const postData = doc.data();
-        // Este es el "then" de los users,
-        // Que retorna una promesa del combinado con el Post y el User
-        const newPromise = postData.userRef.get()
-          .then(docUser => ({ ...postData, user: docUser.data() }));
-        // Al final del primer "then" se pushea una promesa por cada post
-        arrayPromises.push(newPromise);
-      });
-      // Al final del primer "then" retornamos una promesa.all de todos esas promesas pusheadas
-      return Promise.all(arrayPromises);
-    })
-    .catch((error) => {
-      console.log('Error getting documents: ', error);
-    });
-};
+  queryResult.forEach((doc) => {
+    const postData = doc.data();
+    const uidDoc = firebase.auth().currentUser.uid;
+    if (postData.userRef.id === uidDoc) {
+      const newPromise = postData.userRef.get()
+        .then(docUser => ({ ...postData, user: docUser.data() }));
+      arrayPromises.push(newPromise);
+    }
+  });
+  return Promise.all(arrayPromises);
+});
+
+// export const getAllPosts = () => {
+//   const postsRef = firebase.firestore().collection('posts');
+//   return postsRef.get()
+//     // Este es el "then" de los posts
+//     .then(processPostsList)
+//     .catch((error) => {
+//       console.log('Error getting documents: ', error);
+//     });
+// };
+
 
 //   privacy: status,
 //   likes: [],
