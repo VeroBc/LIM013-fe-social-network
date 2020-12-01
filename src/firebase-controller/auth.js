@@ -1,5 +1,5 @@
 import * as firebaseAuth from '../firebase/autentication.js';
-import { setUser, getUser } from './firestore.js';
+import { setUser, getUsers } from './firestore.js';
 
 const provider = new firebase.auth.GoogleAuthProvider();
 const imgDefault = './img/user-default.svg';
@@ -17,7 +17,7 @@ export const googleAccount = () => {
         photo: imgDefault,
       });
     })
-    .then(() => getUser())
+    .then(() => getUsers())
     .then(() => {
       window.location.hash = '#/home';
     })
@@ -42,7 +42,7 @@ export const createUser = (email, password) => {
           photo: imgDefault,
         });
       })
-      .then(() => getUser())
+      .then(() => getUsers())
       .then(() => {
         window.location.hash = '#/home';
       })
@@ -56,7 +56,7 @@ export const createUser = (email, password) => {
 export const signinUser = (email, password) => {
   const errorMessage = document.getElementById('errorMessage');
   firebaseAuth.signinUserAccount(email, password)
-    .then(() => getUser())
+    .then(() => getUsers())
     .then(() => {
       window.location.hash = '#/home';
     })

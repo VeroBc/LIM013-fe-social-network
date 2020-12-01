@@ -37,6 +37,7 @@
         display: grid;
         grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
         grid-template-areas: "publicPicture publicName . . . ."
+                             "publicPicture date date date  . ."
                              "publicPosts publicPosts publicPosts publicPosts publicPosts publicPosts";
         margin:5%;
         border: 1px solid #DDDDDD;
@@ -50,6 +51,12 @@
         border: none;
     }
     
+    .date {
+        grid-area: date;
+        font-size: 12px;
+        font-weight: 10px;
+        text-align: start;
+    }
     
     .homeContainer {
         display: grid;
