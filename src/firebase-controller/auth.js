@@ -14,7 +14,7 @@ export const googleAccount = () => {
         uid: currentUser.uid,
         mail: currentUser.email,
         name: currentUser.email.match(/^([^@]*)@/)[1],
-        photo: imgDefault,
+        photo: currentUser.photoURL,
       });
     })
     .then(() => getUsers())
