@@ -1,38 +1,39 @@
-import { signinUser } from '../firebase-controller/signin-controller.js';
-import { googleAccount } from '../firebase-controller/authGoogle.js';
+import * as auth from '../firebase-controller/auth.js';
 
 export default () => {
   const viewSignIn = `
-  <img src="./img/home.svg" class="img-home">
-  <form id="signin-form">
-    <img class="logo-signin" src="./img/logo-lab-black.svg" alt="">
-    <p class="text-signin">Una red social para preguntas y respuestas hecho por laboratorians y para laboratorians.</p>
-    <button type="button" class="button-google-signin"><img src="./img/logo-google.svg" class="google-icon"alt="">Google</button>
-    <div class="line">
-      <span class="text-signin">
-        O continua con
-      </span>
-    </div>
-    <input class ="email-signin" type="email" id="mail" name="user_mail" placeholder="Ingresa tu correo electrónico">
-    <input class = "password-signin" type="password" id="passwordSignIn" name="user_password" placeholder="Ingresa tu contraseña">
-    <div id= "errorMessages"></div>
-    <input class="submit-signin" type="submit" id="signin" value="Iniciar Sesión">
-    <p class="text-signin">¿No tienes una cuenta? <a href="#/"><span class="change-form">Regístrate</span></a></p>
-  </form>`;
+  <aside class="aside">
+      <img class="foto" src="./img/home.svg" alt=""> 
+  </aside>
+  <form action="/" method="POST" id="signInForm" class="signUpForm">
+      <img src="./img/logo-lab-black.svg" alt="Q&A" class="logo">
+      <label class="motto">Bienvenidas laboratorians!</label>
+      <label class="motto">Haz tus preguntas y respuestas tecnológicas.</label>
+      <div id="inputButton">
+          <input type="email" placeholder="Correo electrónico" id="mail" class="inputButton" required >
+          <input type="password" placeholder="Contraseña" id="passwordSignIn" class="inputButton" required>
+          <div id= "errorMessage"></div>
+      </div>
+      <button type="submit" id="signInButton">Iniciar sesión</button>
+      <label class="altSignUp">O continua con</label>
+      <img src="./img/logo-google.svg" alt="Google" class="googleIcon">
+      <p class="motto">¿Tienes una cuenta?<a href="#/signup" class="login">Regístrate</a></p>
+  </form>
+  `;
+
   document.getElementById('container').classList.add('main');
   const sectionElement = document.createElement('section');
-  sectionElement.classList.add('position-signin');
+  sectionElement.classList.add('signUpContainer');
   sectionElement.innerHTML = viewSignIn;
 
-  const form = sectionElement.querySelector('#signin-form');
+  const form = sectionElement.querySelector('#signInForm');
   const passwordField = sectionElement.querySelector('#passwordSignIn');
   const emailField = sectionElement.querySelector('#mail');
-  const google = sectionElement.querySelector('.button-google-signin');
-  //   Fields validation
+  const google = sectionElement.querySelector('.googleIcon');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    signinUser(emailField.value, passwordField.value);
+    auth.signinUser(emailField.value, passwordField.value);
   });
-  google.addEventListener('click', () => googleAccount());
+  google.addEventListener('click', () => auth.googleAccount());
   return sectionElement;
 };

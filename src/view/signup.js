@@ -1,5 +1,4 @@
-import { createUser } from '../firebase-controller/signup-controller.js';
-import { googleAccount } from '../firebase-controller/authGoogle.js';
+import * as auth from '../firebase-controller/auth.js';
 
 export default () => {
   const viewSignUp = `
@@ -8,16 +7,17 @@ export default () => {
     </aside>
     <form action="/" method="POST" id="signUpForm" class="signUpForm">
         <img src="./img/logo-lab-black.svg" alt="Q&A" class="logo">
-        <label class="motto">Una red social para preguntas y respuestas hecho por laboratorians y para laboratorians</label>
-        <img src="./img/logo-google.svg" alt="Google" class="googleIcon">
-        <label class="altSignUp">O continua con</label>
+        <label class="motto">Bienvenidas laboratorians!</label>
+        <label class="motto">Haz tus preguntas y respuestas tecnológicas.</label>
         <div id="inputButton">
             <input type="email" placeholder="Correo electrónico" id="email" class="inputButton" required >
             <input type="password" placeholder="Contraseña" id="password" class="inputButton" required>
             <div id= "errorMessage"></div>
         </div>
         <button type="submit" id="signUpButton">Registrarse</button>
-        <p>¿Tienes una cuenta?<a href="#/signin" class="login">Inicia sesión</a></p>
+        <label class="altSignUp">O continua con</label>
+        <img src="./img/logo-google.svg" alt="Google" class="googleIcon">
+        <p class="motto">¿Tienes una cuenta?<a href="#/signin" class="login">Inicia sesión</a></p>
     </form>
     `;
   document.getElementById('container').classList.add('main');
@@ -32,8 +32,8 @@ export default () => {
   //   Fields validation
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    createUser(emailField.value, passwordField.value);
+    auth.createUser(emailField.value, passwordField.value);
   });
-  google.addEventListener('click', () => googleAccount());
+  google.addEventListener('click', () => auth.googleAccount());
   return divElement;
 };

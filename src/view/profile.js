@@ -1,56 +1,143 @@
-import { user } from '../firebase/autentication.js';
-import { signOutUser } from '../firebase-controller/signout-controller.js';
-import { uploadProfileImg } from '../firebase/storage.js';
-import { getUser } from '../firebase/store.js';
+/* eslint-disable object-curly-newline */
+import { uploadProfileImg } from '../firebase-controller/storage.js';
+import { getUsers, processPostsProfile, updateUsername, publishPost, updatePost, deletePost } from '../firebase-controller/firestore.js';
+import * as auth from '../firebase-controller/auth.js';
 
 export default () => {
-  getUser();
   const viewProfile = `
-    <nav class="menu-profile">
-      <ul>
-        <a href="#/profile"><img class="img-user-profile" src="./img/user-default.svg"></a>
-        <a href="#/home"><img src="./img/logo-lab-white.svg"></a>
-        <a href="#"><i id="logout" class="fas fa-sign-out-alt logout-profile"></i></a>
-      </ul>
-    </nav>
-    <section class="user-edit-profile">
-      <h3 class="name-user" id="userName"></h3>
-      <img class="img-edit-user-profile" src="./img/user-default.svg">
-      <i class="fas fa-camera camera-profile"></i>
-      <input id="file" type ="file"/>
-      <p class="correo-profile" id="userEmail"></p>
-      <i class="fas fa-pencil-alt icon-edit-profile" id="open"></i>
-      <div id="mask" class="hidden"></div>
-      <section id="modal" class="hidden">
-        <form>
-          <p>Nombre de usuario</p>
-          <input class ="email-signin" type="text" id="name" name="user_mail" placeholder="Ingresa tu nombre" required>
-          <p>Correo de usuario</p>
-          <input class = "password-signin" type="password" id="email" name="user_password" placeholder="Ingresa tu contraseña" required>
-          <p>Contraseña</p>
-          <input class = "password-signin" type="password" id="password" name="user_password" placeholder="Ingresa tu contraseña" required>
-          <input id="close" class="submit-signin" type="submit" id="signin" value="Guardar Cambios">
-        </form>
-      </section>
-    </section>
-    <section class="post">
-      <section class="own-post-profile">
-        <i class="fas fa-ellipsis-v icon-more-profile"></i>
-        <textarea class="text-own-post" disabled>Hola, ¿Alguien me puede recomendar un video de configuración de firebase?
-        </textarea>
-      </section>
-    </section>
+    <header class="mainHead">
+        <img id="userPicture" class="userPicture">
+        <img src="./img/logo-lab-white.svg" alt="Q&A" class="logo">
+        <i class="fas fa-sign-out-alt" id="signOutButton"></i>
+    </header>
+    <aside class="sideProfile">
+        <img id="userPic" class="userPictureAside">
+        <img src="./img/foto-camera.svg" class="camera-profile" alt="Camera">
+        <input id="file" type ="file" accept="image/jpeg, image/png"/>
+        <input type="text" class="userName" id="userName" disabled>
+        <p class="userEmail" id="userEmail"></p>
+        <button id="edit" class="edit" type="submit">Editar</button>
+        <button id="cancel" class="cancel hidden" type="submit">Cancelar</button>
+        <button id="saveChanges" class="saveChanges hidden" type="submit">Guardar</button>  
+    </aside>
+    <article class="content">
+        <textarea id='inputPosts' class="inputPosts" placeholder="En que estas pensando?" ></textarea>
+        <button type="submit" id="postsButton">Compartir</button>
+        <div id="postsProfile">Cargando...</div>
+    </article> 
     `;
-  const currentUser = user();
-  const db = firebase.firestore();
-  document.getElementById('container').classList.remove('main');
-  const sectionElement = document.createElement('section');
-  sectionElement.classList.add('position-profile');
+  const sectionElement = document.createElement('div');
+  sectionElement.classList.add('homeContainer');
   sectionElement.innerHTML = viewProfile;
 
-  const logout = sectionElement.querySelector('#logout');
-  logout.addEventListener('click', () => {
-    signOutUser();
+  getUsers().then((userData) => {
+    const name = sectionElement.querySelector('#userName');
+    const mail = sectionElement.querySelector('#userEmail');
+    const photo = sectionElement.querySelector('#userPicture');
+    const photoAside = sectionElement.querySelector('#userPic');
+    name.value = userData.name;
+    mail.innerText = userData.mail;
+    photo.src = userData.photo;
+    photoAside.src = userData.photo;
+  });
+
+  firebase.firestore().collection('posts').orderBy('date', 'asc').onSnapshot((queryResult) => {
+    processPostsProfile(queryResult).then((postsArray) => {
+      const divSections = sectionElement.querySelector('#postsProfile');
+      divSections.innerHTML = '';
+      postsArray.forEach((postData) => {
+        const postElement = document.createElement('div');
+        postElement.innerHTML = `
+          <div class="publicSide">
+            <img class="publicPicture" src="${postData.user.photo || './img/user-default.svg'}">
+            <p class="publicName">${postData.user.name}</p>
+            <img src="./img/more_menu.svg" alt="menu" id="moreMenu-${postData.id}" class="moreMenu">
+            <img src="./img/edit-text.svg" id="editText-${postData.id}" alt="editText" class="editText hidden">
+            <img src="./img/delete.svg" id="deleteText-${postData.id}" alt="deleteText" class="deleteText hidden">
+            <p class="date">${postData.date}</p>
+            <p class="publicPosts" id="publicPosts-${postData.id}">${postData.comment}</p>
+            <img src="./img/cancel.svg" id="cancelText-${postData.id}" alt="cancelText" class="cancelText hidden">
+            <img src="./img/save.svg" id="saveText-${postData.id}" alt="saveText" class="saveText hidden">
+          </div>`;
+        const editText = postElement.querySelector(`#editText-${postData.id}`);
+        const deleteText = postElement.querySelector(`#deleteText-${postData.id}`);
+        const saveText = postElement.querySelector(`#cancelText-${postData.id}`);
+        const cancelText = postElement.querySelector(`#saveText-${postData.id}`);
+        const newComment = postElement.querySelector(`#publicPosts-${postData.id}`);
+        postElement.querySelector(`#moreMenu-${postData.id}`)
+          .addEventListener('click', () => {
+            if (editText.style.display === 'none' && deleteText.style.display === 'none') {
+              editText.style.display = 'block';
+              deleteText.style.display = 'block';
+              saveText.style.display = 'none';
+              cancelText.style.display = 'none';
+            } else {
+              editText.style.display = 'none';
+              deleteText.style.display = 'none';
+              saveText.style.display = 'none';
+              cancelText.style.display = 'none';
+              newComment.contentEditable = false;
+            }
+          });
+        postElement.querySelector(`#editText-${postData.id}`)
+          .addEventListener('click', () => {
+            if (saveText.style.display === 'none' && cancelText.style.display === 'none') {
+              saveText.style.display = 'block';
+              cancelText.style.display = 'block';
+              newComment.contentEditable = true;
+              newComment.focus();
+            } else {
+              saveText.style.display = 'none';
+              cancelText.style.display = 'none';
+              newComment.contentEditable = false;
+            }
+          });
+        postElement.querySelector(`#saveText-${postData.id}`)
+          .addEventListener('click', () => {
+            const comment = postElement.querySelector(`#publicPosts-${postData.id}`);
+            const newcomment = comment.textContent;
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateTime = new Date().toLocaleDateString('es-AR', options);
+            saveText.style.display = 'none';
+            cancelText.style.display = 'none';
+            editText.style.display = 'none';
+            deleteText.style.display = 'none';
+            newComment.contentEditable = false;
+            updatePost(postData.id, newcomment, dateTime);
+          });
+        postElement.querySelector(`#cancelText-${postData.id}`)
+          .addEventListener('click', () => {
+            const comment = postElement.querySelector(`#publicPosts-${postData.id}`);
+            comment.textContent = `${postData.comment}`;
+            saveText.style.display = 'none';
+            cancelText.style.display = 'none';
+            editText.style.display = 'none';
+            deleteText.style.display = 'none';
+            newComment.contentEditable = false;
+          });
+        postElement.querySelector(`#deleteText-${postData.id}`)
+          .addEventListener('click', () => {
+            deletePost(postData.id);
+          });
+        divSections.appendChild(postElement);
+      });
+    });
+  });
+
+  const postsButton = sectionElement.querySelector('#postsButton');
+  postsButton.addEventListener('click', (e) => {
+    const newPost = sectionElement.querySelector('#inputPosts').value;
+    sectionElement.querySelector('#inputPosts').value = '';
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateTime = new Date().toLocaleDateString('es-AR', options);
+    e.preventDefault();
+    publishPost(newPost, dateTime);
+  });
+
+  const signOutButton = sectionElement.querySelector('#signOutButton');
+  signOutButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    auth.signOutUser();
   });
 
   const camera = sectionElement.querySelector('.camera-profile');
@@ -63,27 +150,39 @@ export default () => {
     });
   });
 
-  const open = sectionElement.querySelector('#open');
-  const close = sectionElement.querySelector('#close');
-  const modal = sectionElement.querySelector('#modal');
-  const mask = sectionElement.querySelector('#mask');
+  const edit = sectionElement.querySelector('#edit');
+  const cancel = sectionElement.querySelector('#cancel');
+  const saveChanges = sectionElement.querySelector('#saveChanges');
+  edit.addEventListener('click', () => {
+    document.getElementById('userName').disabled = false;
+    edit.classList.add('hidden');
+    saveChanges.classList.remove('hidden');
+    cancel.classList.remove('hidden');
+    document.getElementById('userName').focus();
+  });
 
-  open.addEventListener('click', () => {
-    modal.classList.remove('hidden');
-    mask.classList.remove('hidden');
+  cancel.addEventListener('click', () => {
+    document.getElementById('userName').disabled = true;
+    edit.classList.remove('hidden');
+    saveChanges.classList.add('hidden');
+    cancel.classList.add('hidden');
   });
-  close.addEventListener('click', () => {
-    db.collection('users-qa').doc(currentUser.uid).update({
-      mail: '',
-      name: '',
-      pass: '',
-    });
-    modal.classList.add('hidden');
-    mask.classList.add('hidden');
+
+  saveChanges.addEventListener('click', () => {
+    document.getElementById('userName').disabled = true;
+    edit.classList.remove('hidden');
+    saveChanges.classList.add('hidden');
+    cancel.classList.add('hidden');
+    const username = document.querySelector('#userName');
+    const newname = username.value;
+    updateUsername(newname);
   });
-  mask.addEventListener('click', () => {
-    modal.classList.add('hidden');
-    mask.classList.add('hidden');
+
+  const profileView = sectionElement.querySelector('.userPicture');
+  profileView.addEventListener('click', (e) => {
+    e.preventDefault();
+    // window.location.hash = '#/home';
+    window.history.back();
   });
 
   return sectionElement;
