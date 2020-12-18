@@ -1,7 +1,8 @@
 /* eslint-disable object-curly-newline */
-import { uploadProfileImg } from '../firebase-controller/storage.js';
-import { getUsers, processPostsProfile, updateUsername, publishPost, updatePost, deletePost } from '../firebase-controller/firestore.js';
 import * as auth from '../firebase-controller/auth.js';
+import * as db from '../firebase-controller/database.js';
+import { uploadProfileImg } from '../firebase-controller/storage.js';
+import { eachPost } from './posts.js';
 
 export default () => {
   const viewProfile = `
@@ -30,7 +31,7 @@ export default () => {
   sectionElement.classList.add('homeContainer');
   sectionElement.innerHTML = viewProfile;
 
-  getUsers().then((userData) => {
+  db.getCurrentUser().then((userData) => {
     const name = sectionElement.querySelector('#userName');
     const mail = sectionElement.querySelector('#userEmail');
     const photo = sectionElement.querySelector('#userPicture');
@@ -41,87 +42,10 @@ export default () => {
     photoAside.src = userData.photo;
   });
 
-  firebase.firestore().collection('posts').orderBy('date', 'asc').onSnapshot((queryResult) => {
-    processPostsProfile(queryResult).then((postsArray) => {
-      const divSections = sectionElement.querySelector('#postsProfile');
-      divSections.innerHTML = '';
-      postsArray.forEach((postData) => {
-        const postElement = document.createElement('div');
-        postElement.innerHTML = `
-          <div class="publicSide">
-            <img class="publicPicture" src="${postData.user.photo || './img/user-default.svg'}">
-            <p class="publicName">${postData.user.name}</p>
-            <img src="./img/more_menu.svg" alt="menu" id="moreMenu-${postData.id}" class="moreMenu">
-            <img src="./img/edit-text.svg" id="editText-${postData.id}" alt="editText" class="editText hidden">
-            <img src="./img/delete.svg" id="deleteText-${postData.id}" alt="deleteText" class="deleteText hidden">
-            <p class="date">${postData.date}</p>
-            <p class="publicPosts" id="publicPosts-${postData.id}">${postData.comment}</p>
-            <img src="./img/cancel.svg" id="cancelText-${postData.id}" alt="cancelText" class="cancelText hidden">
-            <img src="./img/save.svg" id="saveText-${postData.id}" alt="saveText" class="saveText hidden">
-          </div>`;
-        const editText = postElement.querySelector(`#editText-${postData.id}`);
-        const deleteText = postElement.querySelector(`#deleteText-${postData.id}`);
-        const saveText = postElement.querySelector(`#cancelText-${postData.id}`);
-        const cancelText = postElement.querySelector(`#saveText-${postData.id}`);
-        const newComment = postElement.querySelector(`#publicPosts-${postData.id}`);
-        postElement.querySelector(`#moreMenu-${postData.id}`)
-          .addEventListener('click', () => {
-            if (editText.style.display === 'none' && deleteText.style.display === 'none') {
-              editText.style.display = 'block';
-              deleteText.style.display = 'block';
-              saveText.style.display = 'none';
-              cancelText.style.display = 'none';
-            } else {
-              editText.style.display = 'none';
-              deleteText.style.display = 'none';
-              saveText.style.display = 'none';
-              cancelText.style.display = 'none';
-              newComment.contentEditable = false;
-            }
-          });
-        postElement.querySelector(`#editText-${postData.id}`)
-          .addEventListener('click', () => {
-            if (saveText.style.display === 'none' && cancelText.style.display === 'none') {
-              saveText.style.display = 'block';
-              cancelText.style.display = 'block';
-              newComment.contentEditable = true;
-              newComment.focus();
-            } else {
-              saveText.style.display = 'none';
-              cancelText.style.display = 'none';
-              newComment.contentEditable = false;
-            }
-          });
-        postElement.querySelector(`#saveText-${postData.id}`)
-          .addEventListener('click', () => {
-            const comment = postElement.querySelector(`#publicPosts-${postData.id}`);
-            const newcomment = comment.textContent;
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const dateTime = new Date().toLocaleDateString('es-AR', options);
-            saveText.style.display = 'none';
-            cancelText.style.display = 'none';
-            editText.style.display = 'none';
-            deleteText.style.display = 'none';
-            newComment.contentEditable = false;
-            updatePost(postData.id, newcomment, dateTime);
-          });
-        postElement.querySelector(`#cancelText-${postData.id}`)
-          .addEventListener('click', () => {
-            const comment = postElement.querySelector(`#publicPosts-${postData.id}`);
-            comment.textContent = `${postData.comment}`;
-            saveText.style.display = 'none';
-            cancelText.style.display = 'none';
-            editText.style.display = 'none';
-            deleteText.style.display = 'none';
-            newComment.contentEditable = false;
-          });
-        postElement.querySelector(`#deleteText-${postData.id}`)
-          .addEventListener('click', () => {
-            deletePost(postData.id);
-          });
-        divSections.appendChild(postElement);
-      });
-    });
+  db.subscribePostListProfile((postsArray) => {
+    const divSections = sectionElement.querySelector('#postsProfile');
+    divSections.innerHTML = '';
+    postsArray.forEach(postData => divSections.appendChild(eachPost(postData)));
   });
 
   const postsButton = sectionElement.querySelector('#postsButton');
@@ -131,7 +55,7 @@ export default () => {
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const dateTime = new Date().toLocaleDateString('es-AR', options);
     e.preventDefault();
-    publishPost(newPost, dateTime);
+    db.publishPost(newPost, dateTime);
   });
 
   const signOutButton = sectionElement.querySelector('#signOutButton');
@@ -175,13 +99,12 @@ export default () => {
     cancel.classList.add('hidden');
     const username = document.querySelector('#userName');
     const newname = username.value;
-    updateUsername(newname);
+    db.updateUsername(newname);
   });
 
   const profileView = sectionElement.querySelector('.userPicture');
   profileView.addEventListener('click', (e) => {
     e.preventDefault();
-    // window.location.hash = '#/home';
     window.history.back();
   });
 
