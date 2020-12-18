@@ -1,5 +1,5 @@
 import * as firebaseAuth from '../firebase/autentication.js';
-import { setUser, getUsers } from './firestore.js';
+import { setUser, getCurrentUser } from './database.js';
 
 const provider = new firebase.auth.GoogleAuthProvider();
 const imgDefault = './img/user-default.svg';
@@ -17,7 +17,7 @@ export const googleAccount = () => {
         photo: currentUser.photoURL,
       });
     })
-    .then(() => getUsers())
+    .then(() => getCurrentUser())
     .then(() => {
       window.location.hash = '#/home';
     })
@@ -42,7 +42,7 @@ export const createUser = (email, password) => {
           photo: imgDefault,
         });
       })
-      .then(() => getUsers())
+      .then(() => getCurrentUser())
       .then(() => {
         window.location.hash = '#/home';
       })
@@ -55,8 +55,9 @@ export const createUser = (email, password) => {
 
 export const signinUser = (email, password) => {
   const errorMessage = document.getElementById('errorMessage');
-  firebaseAuth.signinUserAccount(email, password)
-    .then(() => getUsers())
+  firebaseAuth.persistenceUser()
+    .then(() => firebaseAuth.signinUserAccount(email, password))
+    .then(() => getCurrentUser())
     .then(() => {
       window.location.hash = '#/home';
     })

@@ -99,7 +99,8 @@ button:hover {
   grid-template-areas: "publicPicture publicName publicName . edit delete more"
                        "publicPicture date date date . . . "
                        "publicPosts publicPosts publicPosts publicPosts publicPosts publicPosts publicPosts"
-                       ". . . . cancel . save";
+                       ". . . . cancel . save"
+                       "like comments . . . . .";
   margin:5%;
   border: 1px solid #DDDDDD;
   border-radius: 5px;
@@ -128,6 +129,22 @@ button:hover {
   grid-area: save;  
   margin-top: 10px;
   cursor: pointer;
+}
+
+.likeText {
+  grid-area: like;
+  margin-left: 22px;
+  margin-bottom: 6px;
+}
+
+.likedText {
+  grid-area: like;
+  margin-left: 22px;
+  margin-bottom: 6px;
+}
+
+.commentsText {
+  grid-area: comments;
 }
 
 .publicPosts {
@@ -306,6 +323,14 @@ button:hover {
 }
 
 #file {
+  display: none;
+}
+
+.likeText.hidden {
+  display: none;
+}
+
+.likedText.hidden {
   display: none;
 }
 

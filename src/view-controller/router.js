@@ -6,9 +6,9 @@ export const changeView = (route) => {
   container.innerHTML = '';
   let chosenRoute = '';
   switch (route) {
-    case '': chosenRoute = container.appendChild(components.signup());
+    case '': chosenRoute = container.appendChild(components.home());
       break;
-    case '#/': chosenRoute = container.appendChild(components.signup());
+    case '#/': chosenRoute = container.appendChild(components.home());
       break;
     case '#/home': chosenRoute = container.appendChild(components.home());
       break;
