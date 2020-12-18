@@ -1,6 +1,7 @@
 /* eslint-disable object-curly-newline */
 import * as auth from '../firebase-controller/auth.js';
-import { getUsers, processPostsList, publishPost } from '../firebase-controller/firestore.js';
+import * as db from '../firebase-controller/database.js';
+import { eachComment } from './comments.js';
 
 export default () => {
   const viewHome = `
@@ -24,7 +25,11 @@ export default () => {
   sectionElement.classList.add('homeContainer');
   sectionElement.innerHTML = viewHome;
 
-  getUsers().then((userData) => {
+  db.getCurrentUser().then((userData) => {
+    if (!userData) {
+      window.location.hash = '#/signup';
+      return;
+    }
     const name = sectionElement.querySelector('#userName');
     const mail = sectionElement.querySelector('#userEmail');
     const photo = sectionElement.querySelector('#userPicture');
@@ -35,22 +40,10 @@ export default () => {
     photoAside.src = userData.photo;
   });
 
-  firebase.firestore().collection('posts').orderBy('date', 'asc').onSnapshot((queryResult) => {
-    processPostsList(queryResult).then((postsArray) => {
-      const divSections = sectionElement.querySelector('#posts');
-      divSections.innerHTML = '';
-      postsArray.forEach((postData) => {
-        const postElement = document.createElement('div');
-        postElement.innerHTML = `
-          <div class="publicSide">
-            <img class="publicPicture" src="${postData.user.photo || './img/user-default.svg'}">
-            <p class="publicName">${postData.user.name}</p>
-            <p class="date">${postData.date}</p>
-            <p class="publicPosts">${postData.comment}</p>
-          </div>`;
-        divSections.appendChild(postElement);
-      });
-    });
+  db.subscribePostList((postsArray) => {
+    const divSections = sectionElement.querySelector('#posts');
+    divSections.innerHTML = '';
+    postsArray.forEach(postData => divSections.appendChild(eachComment(postData)));
   });
 
   const postsButton = sectionElement.querySelector('#postsButton');
@@ -60,7 +53,7 @@ export default () => {
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const dateTime = new Date().toLocaleDateString('es-AR', options);
     e.preventDefault();
-    publishPost(newPost, dateTime);
+    db.publishPost(newPost, dateTime);
   });
 
   const signOutButton = sectionElement.querySelector('#signOutButton');
@@ -69,8 +62,12 @@ export default () => {
     auth.signOutUser();
   });
 
-  const profileView = sectionElement.querySelector('#userPicture');
-  profileView.addEventListener('click', (e) => {
+  sectionElement.querySelector('#userPicture').addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.hash = '#/profile';
+  });
+
+  sectionElement.querySelector('#userPic').addEventListener('click', (e) => {
     e.preventDefault();
     window.location.hash = '#/profile';
   });
